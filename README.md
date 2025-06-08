@@ -1,6 +1,9 @@
 # Shift Scheduling App
 
-This repository contains a simple shift scheduling optimizer built with [PuLP](https://github.com/coin-or/pulp).
+This repository contains a simple shift scheduling optimizer built with
+[PuLP](https://github.com/coin-or/pulp).  The project is organised as a small
+package with a command line interface exposed via the ``shift-optimizer``
+script.
 
 ## Using Poetry
 
