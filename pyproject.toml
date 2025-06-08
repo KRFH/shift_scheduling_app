@@ -15,7 +15,7 @@ xlsxwriter = "^3.2.3"
 PuLP = "^2.8.0"
 
 [tool.poetry.scripts]
-shift-optimizer = "shift_optimizer:main"
+shift-optimizer = "shift_optimizer.cli:main"
 
 [build-system]
 requires = ["poetry-core>=1.6.0"]
