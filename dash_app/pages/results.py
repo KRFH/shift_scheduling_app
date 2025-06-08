@@ -1,16 +1,17 @@
 import pandas as pd
 import dash
+import dash_bootstrap_components as dbc
 from dash import html, dash_table, dcc, callback, Input, Output, State
 
 dash.register_page(__name__, path="/results")
 
-layout = html.Div([
-    html.H2("Results"),
-    dcc.Store(id="result-store", storage_type="session"),
-    html.Div(id="results-content"),
-    html.Br(),
-    dcc.Link("Back to Upload", href="/"),
-])
+layout = html.Div(
+    [
+        html.H2("Results"),
+        dcc.Store(id="result-store", storage_type="session"),
+        html.Div(id="results-content"),
+    ]
+)
 
 
 @callback(
@@ -30,12 +31,13 @@ def display_results(data):
             columns=[{"name": c, "id": c} for c in df.columns],
         )
 
-    return html.Div([
-        html.H3("Schedule"),
-        table_from_df(schedule_df),
-        html.H3("Hours"),
-        table_from_df(hours_df),
-        html.H3("KPI"),
-        table_from_df(kpi_df),
-    ])
-
+    return html.Div(
+        [
+            html.H3("Schedule"),
+            table_from_df(schedule_df),
+            html.H3("Hours"),
+            table_from_df(hours_df),
+            html.H3("KPI"),
+            table_from_df(kpi_df),
+        ]
+    )

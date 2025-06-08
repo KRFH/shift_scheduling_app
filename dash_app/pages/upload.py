@@ -3,6 +3,7 @@ from io import BytesIO
 
 import pandas as pd
 import dash
+import dash_bootstrap_components as dbc
 from dash import html, dcc, callback, Input, Output, State
 
 from shift_optimizer import InputData, ShiftSchedulingModel
@@ -19,18 +20,15 @@ def read_data_from_bytes(data: bytes) -> InputData:
 
 dash.register_page(__name__, path="/")
 
-layout = html.Div([
-    html.H2("Upload Input"),
-    dcc.Upload(
-        id="upload-data",
-        children=html.Button("Select Excel File"),
-    ),
-    html.Button("Run Optimization", id="run-button"),
-    html.Div(id="run-status"),
-    dcc.Store(id="result-store", storage_type="session"),
-    html.Br(),
-    dcc.Link("Go to Results", href="/results"),
-])
+layout = html.Div(
+    [
+        html.H2("Upload Input"),
+        dcc.Upload(id="upload-data", children=dbc.Button("Select Excel File")),
+        dbc.Button("Run Optimization", id="run-button", className="mt-2"),
+        html.Div(id="run-status", className="mt-2"),
+        dcc.Store(id="result-store", storage_type="session"),
+    ]
+)
 
 
 @callback(
@@ -56,4 +54,3 @@ def run_optimizer(n_clicks, contents):
         "kpi": kpi_df.to_json(orient="split"),
     }
     return "Optimization complete.", result
-
