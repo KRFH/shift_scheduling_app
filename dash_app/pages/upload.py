@@ -56,3 +56,4 @@ def run_optimizer(n_clicks, contents):
         "kpi": kpi_df.to_json(orient="split"),
     }
     return "Optimization complete.", result
+

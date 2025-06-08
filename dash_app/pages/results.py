@@ -23,11 +23,19 @@ def display_results(data):
     schedule_df = pd.read_json(data["schedule"], orient="split")
     hours_df = pd.read_json(data["hours"], orient="split")
     kpi_df = pd.read_json(data["kpi"], orient="split")
+
+    def table_from_df(df: pd.DataFrame) -> dash_table.DataTable:
+        return dash_table.DataTable(
+            data=df.to_dict("records"),
+            columns=[{"name": c, "id": c} for c in df.columns],
+        )
+
     return html.Div([
         html.H3("Schedule"),
-        dash_table.DataTable(schedule_df.to_dict("records"), list(schedule_df.columns)),
+        table_from_df(schedule_df),
         html.H3("Hours"),
-        dash_table.DataTable(hours_df.to_dict("records"), list(hours_df.columns)),
+        table_from_df(hours_df),
         html.H3("KPI"),
-        dash_table.DataTable(kpi_df.to_dict("records"), list(kpi_df.columns)),
+        table_from_df(kpi_df),
     ])
+
