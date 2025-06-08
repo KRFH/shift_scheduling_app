@@ -1,0 +1,21 @@
+[tool.poetry]
+name = "shift-scheduling-app"
+version = "0.1.0"
+description = "Shift scheduling optimization using PuLP"
+authors = ["Unknown"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.12"
+pandas = "*"
+numpy = "*"
+openpyxl = "*"
+xlsxwriter = "*"
+PuLP = "*"
+
+[tool.poetry.scripts]
+shift-optimizer = "shift_optimizer:main"
+
+[build-system]
+requires = ["poetry-core>=1.6.0"]
+build-backend = "poetry.core.masonry.api"
