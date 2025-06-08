@@ -5,7 +5,7 @@ import dash
 import dash_bootstrap_components as dbc
 from dash import html
 
-from .base_layout import base_layout
+from dash_app.base_layout import base_layout
 
 # Allow importing project modules when running as a script
 ROOT = Path(__file__).resolve().parents[1]
