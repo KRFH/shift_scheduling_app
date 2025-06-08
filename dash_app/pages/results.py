@@ -43,16 +43,8 @@ def display_results(data):
         demand_df["Slot"] = pd.Categorical(demand_df["Slot"], slot_order, ordered=True)
         avail_ok = avail_df[avail_df["Availability"].isin(["OK", "Wish"])]
         avail_wish = avail_df[avail_df["Availability"] == "Wish"]
-        ok_counts = (
-            avail_ok.groupby(["Date", "Slot"])\
-                .size()\
-                .reset_index(name="AvailableOK")
-        )
-        wish_counts = (
-            avail_wish.groupby(["Date", "Slot"])\
-                .size()\
-                .reset_index(name="AvailableWish")
-        )
+        ok_counts = avail_ok.groupby(["Date", "Slot"]).size().reset_index(name="AvailableOK")
+        wish_counts = avail_wish.groupby(["Date", "Slot"]).size().reset_index(name="AvailableWish")
         summary = (
             demand_df.merge(ok_counts, on=["Date", "Slot"], how="left")
             .merge(wish_counts, on=["Date", "Slot"], how="left")
@@ -72,22 +64,24 @@ def display_results(data):
             )
         )
         summary = summary.sort_values(["Date", "Slot"])
-        summary["Time"] = summary["Date"] + " " + summary["Slot"].astype(str)
+        summary["Time"] = summary["Date"].astype(str) + " " + summary["Slot"].astype(str)
         fig_area = go.Figure()
         fig_area.add_trace(
-            go.Scatter(x=summary["Time"], y=summary["AvailableWish"], name="AvailableWish", stackgroup="one", mode="lines")
+            go.Scatter(
+                x=summary["Time"], y=summary["AvailableWish"], name="AvailableWish", stackgroup="one", mode="lines"
+            )
         )
         fig_area.add_trace(
             go.Scatter(x=summary["Time"], y=summary["AvailableOK"], name="AvailableOK", stackgroup="one", mode="lines")
         )
-        fig_area.add_trace(
-            go.Scatter(x=summary["Time"], y=summary["RequiredCnt"], name="RequiredCnt", mode="lines")
-        )
+        fig_area.add_trace(go.Scatter(x=summary["Time"], y=summary["RequiredCnt"], name="RequiredCnt", mode="lines"))
         fig_area.update_layout(xaxis=dict(type="category"))
-        components.extend([
-            dcc.Graph(figure=fig_heat),
-            dcc.Graph(figure=fig_area),
-        ])
+        components.extend(
+            [
+                dcc.Graph(figure=fig_heat),
+                dcc.Graph(figure=fig_area),
+            ]
+        )
 
     components.extend(
         [
