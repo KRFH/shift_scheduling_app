@@ -1,5 +1,13 @@
+import sys
+from pathlib import Path
+
 import dash
 from dash import html, dcc
+
+# Allow importing project modules when running as a script
+ROOT = Path(__file__).resolve().parents[1]
+if str(ROOT) not in sys.path:
+    sys.path.insert(0, str(ROOT))
 
 app = dash.Dash(__name__, use_pages=True, suppress_callback_exceptions=True)
 server = app.server
