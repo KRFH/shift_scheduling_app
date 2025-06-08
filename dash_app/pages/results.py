@@ -2,7 +2,7 @@ import pandas as pd
 import dash
 import dash_bootstrap_components as dbc
 from dash import html, dash_table, dcc, callback, Input, Output
-import plotly.express as px
+import plotly.graph_objects as go
 
 dash.register_page(__name__, path="/results")
 
@@ -61,19 +61,29 @@ def display_results(data):
         summary["Gap"] = summary["RequiredCnt"] - summary["AvailableOK"]
         pivot = summary.pivot(index="Date", columns="Slot", values="Gap").sort_index()
         max_gap = pivot.abs().max().max()
-        fig_heat = px.imshow(
-            pivot,
-            color_continuous_scale="RdBu",
-            zmin=-max_gap,
-            zmax=max_gap,
+        fig_heat = go.Figure(
+            data=go.Heatmap(
+                z=pivot.values,
+                x=list(pivot.columns),
+                y=list(pivot.index),
+                colorscale="RdBu",
+                zmin=-max_gap,
+                zmax=max_gap,
+            )
         )
         summary = summary.sort_values(["Date", "Slot"])
         summary["Time"] = summary["Date"] + " " + summary["Slot"].astype(str)
-        fig_area = px.area(
-            summary,
-            x="Time",
-            y=["RequiredCnt", "AvailableOK", "AvailableWish"],
+        fig_area = go.Figure()
+        fig_area.add_trace(
+            go.Scatter(x=summary["Time"], y=summary["AvailableWish"], name="AvailableWish", stackgroup="one", mode="lines")
         )
+        fig_area.add_trace(
+            go.Scatter(x=summary["Time"], y=summary["AvailableOK"], name="AvailableOK", stackgroup="one", mode="lines")
+        )
+        fig_area.add_trace(
+            go.Scatter(x=summary["Time"], y=summary["RequiredCnt"], name="RequiredCnt", mode="lines")
+        )
+        fig_area.update_layout(xaxis=dict(type="category"))
         components.extend([
             dcc.Graph(figure=fig_heat),
             dcc.Graph(figure=fig_area),
