@@ -40,17 +40,19 @@ def display_results(data):
     components = []
     if demand_df is not None and avail_df is not None:
         slot_order = ["10-14", "14-18", "18-22", "22-26"]
-        demand_df["Slot"] = pd.Categorical(demand_df["Slot"], slot_order, ordered=True)
+        demand_df["Slot"] = pd.Categorical(
+            demand_df["Slot"], categories=slot_order, ordered=True
+        )
+
         avail_ok = avail_df[avail_df["Availability"].isin(["OK", "Wish"])]
         avail_wish = avail_df[avail_df["Availability"] == "Wish"]
-        ok_counts = avail_ok.groupby(["Date", "Slot"]).size().reset_index(name="AvailableOK")
-        wish_counts = avail_wish.groupby(["Date", "Slot"]).size().reset_index(name="AvailableWish")
-        summary = (
-            demand_df.merge(ok_counts, on=["Date", "Slot"], how="left")
-            .merge(wish_counts, on=["Date", "Slot"], how="left")
-            .fillna(0)
+
+            avail_ok.groupby(["Date", "Slot"]).size().reset_index(name="AvailableOK")
+            avail_wish.groupby(["Date", "Slot"]).size().reset_index(name="AvailableWish")
         )
+
         summary["Gap"] = summary["RequiredCnt"] - summary["AvailableOK"]
+
         pivot = summary.pivot(index="Date", columns="Slot", values="Gap").sort_index()
         max_gap = pivot.abs().max().max()
         fig_heat = go.Figure(
@@ -63,32 +65,45 @@ def display_results(data):
                 zmax=max_gap,
             )
         )
+
         summary = summary.sort_values(["Date", "Slot"])
 
-        components.extend(
-            [
-                html.Div(
-                    [
-                        html.H4("Staffing Gap Heatmap"),
-                        html.P(
-                            "Red cells show a shortage of confirmed staff (OK) versus demand; blue cells show surplus."
-                        ),
-                        dcc.Graph(figure=fig_heat),
-                    ],
-                    className="mb-4",
+            go.Scatter(
+                x=summary["Time"],
+                y=summary["AvailableWish"],
+                name="AvailableWish",
+                stackgroup="one",
+                mode="lines",
+            )
+            go.Scatter(
+                x=summary["Time"],
+                y=summary["AvailableOK"],
+                name="AvailableOK",
+                stackgroup="one",
+                mode="lines",
+            )
+        heatmap_section = html.Div(
+                html.H4("Staffing Gap Heatmap"),
+                html.P(
+                    "Red cells show a shortage of confirmed staff (OK) versus demand; blue cells show surplus."
                 ),
-                html.Div(
-                    [
-                        html.H4("Required vs Available Over Time"),
-                        html.P(
-                            "Compare required workers with confirmed (OK) and wish availability across slots."
-                        ),
-                        dcc.Graph(figure=fig_area),
-                    ],
-                    className="mb-4",
-                ),
-            ]
+                dcc.Graph(figure=fig_heat),
+            ],
+            className="mb-4",
         )
+
+        area_section = html.Div(
+            [
+                html.H4("Required vs Available Over Time"),
+                html.P(
+                    "Compare required workers with confirmed (OK) and wish availability across slots."
+                ),
+                dcc.Graph(figure=fig_area),
+            ],
+            className="mb-4",
+        )
+        components.extend([heatmap_section, area_section])
+
             html.Div(
                 [html.H4("Shift Schedule"), table_from_df(schedule_df)],
                 className="mb-4",
