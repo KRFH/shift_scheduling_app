@@ -1,1 +1,15 @@
-# shift_scheduling_app
+# Shift Scheduling App
+
+This repository contains a simple shift scheduling optimizer built with [PuLP](https://github.com/coin-or/pulp).
+
+## Using Poetry
+
+1. Install [Poetry](https://python-poetry.org/) if you do not have it.
+2. Run `poetry install` to create the virtual environment.
+3. Execute the optimizer with:
+
+```bash
+poetry run shift-optimizer --input sample_shift_input.xlsx --output schedule_output.xlsx
+```
+
+Sample input and output Excel files are provided.
