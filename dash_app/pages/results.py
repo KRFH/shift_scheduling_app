@@ -64,16 +64,43 @@ def display_results(data):
             )
         )
         summary = summary.sort_values(["Date", "Slot"])
-        summary["Time"] = summary["Date"].astype(str) + " " + summary["Slot"].astype(str)
-        fig_area = go.Figure()
-        fig_area.add_trace(
-            go.Scatter(
-                x=summary["Time"], y=summary["AvailableWish"], name="AvailableWish", stackgroup="one", mode="lines"
-            )
+
+        components.extend(
+            [
+                html.Div(
+                    [
+                        html.H4("Staffing Gap Heatmap"),
+                        html.P(
+                            "Red cells show a shortage of confirmed staff (OK) versus demand; blue cells show surplus."
+                        ),
+                        dcc.Graph(figure=fig_heat),
+                    ],
+                    className="mb-4",
+                ),
+                html.Div(
+                    [
+                        html.H4("Required vs Available Over Time"),
+                        html.P(
+                            "Compare required workers with confirmed (OK) and wish availability across slots."
+                        ),
+                        dcc.Graph(figure=fig_area),
+                    ],
+                    className="mb-4",
+                ),
+            ]
         )
-        fig_area.add_trace(
-            go.Scatter(x=summary["Time"], y=summary["AvailableOK"], name="AvailableOK", stackgroup="one", mode="lines")
-        )
+            html.Div(
+                [html.H4("Shift Schedule"), table_from_df(schedule_df)],
+                className="mb-4",
+            ),
+            html.Div(
+                [html.H4("Work Hours Summary"), table_from_df(hours_df)],
+                className="mb-4",
+            ),
+            html.Div(
+                [html.H4("Key Performance Indicators"), table_from_df(kpi_df)],
+                className="mb-4",
+            ),
         fig_area.add_trace(go.Scatter(x=summary["Time"], y=summary["RequiredCnt"], name="RequiredCnt", mode="lines"))
         fig_area.update_layout(xaxis=dict(type="category"))
         components.extend(
