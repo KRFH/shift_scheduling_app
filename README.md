@@ -16,3 +16,11 @@ poetry run shift-optimizer --input sample_shift_input.xlsx --output schedule_out
 ```
 
 Sample input and output Excel files are provided.
+
+## Dash Application
+
+Run the interactive Dash app to upload an Excel file and see the results:
+
+```bash
+poetry run python dash_app/app.py
+```
