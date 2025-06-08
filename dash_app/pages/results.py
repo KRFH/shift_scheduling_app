@@ -44,10 +44,14 @@ def display_results(data):
         avail_ok = avail_df[avail_df["Availability"].isin(["OK", "Wish"])]
         avail_wish = avail_df[avail_df["Availability"] == "Wish"]
         ok_counts = (
-            avail_ok.groupby(["Date", "Slot"]).size().rename("AvailableOK")
+            avail_ok.groupby(["Date", "Slot"])\
+                .size()\
+                .reset_index(name="AvailableOK")
         )
         wish_counts = (
-            avail_wish.groupby(["Date", "Slot"]).size().rename("AvailableWish")
+            avail_wish.groupby(["Date", "Slot"])\
+                .size()\
+                .reset_index(name="AvailableWish")
         )
         summary = (
             demand_df.merge(ok_counts, on=["Date", "Slot"], how="left")
