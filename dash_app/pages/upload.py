@@ -52,5 +52,7 @@ def run_optimizer(n_clicks, contents):
         "schedule": schedule_df.to_json(orient="split"),
         "hours": hours_df.to_json(orient="split"),
         "kpi": kpi_df.to_json(orient="split"),
+        "availability": data.availability.to_json(orient="split"),
+        "demand": data.demand.to_json(orient="split"),
     }
     return "Optimization complete.", result
